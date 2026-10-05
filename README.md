@@ -1,252 +1,133 @@
-# Mini CRM
+# Mini CRM для исполнителей
 
-Мобильное приложение-шаблон для управления заказами исполнителей различных услуг (кондитеры, автомеханики, сантехники и др.).
+Мобильная мини-CRM для исполнителей: кондитеров, автомехаников, сантехников, мастеров и т. д.
+Заказы приходят извне через API. Исполнитель видит их списком, открывает карточку с фото,
+меняет статус, отмечает чек-лист и пишет заметки.
 
-## 🎯 Особенности
+- **frontend/** — React 19 + Vite + TypeScript + Tailwind v4 + **shadcn/ui** (стиль new-york, zinc)
+- **backend/** — Django 5 + SQLite, JSON API, админка
+- запуск всего через **npm**
 
-- **Мобильный дизайн** - оптимизирован для работы одной рукой на телефоне
-- **Быстрый доступ** - мгновенная загрузка, все данные доступны офлайн
-- **Современный интерфейс** - закругленные края, плавные анимации, поддержка тёмной темы
-- **Фото-галерея** - просмотр фотографий заказа в полноэкранном режиме
-- **Управление статусами** - быстрое обновление статуса заказа одним касанием
-- **Фильтрация** - удобные фильтры по статусу заказа
+## Быстрый старт
 
-## 🚀 Быстрый старт
+Нужны Node.js 20+ и Python 3.11+.
 
 ```bash
-# Установите зависимости (один раз)
-npm install
-
-# Запустите dev-сервер с горячей перезагрузкой
-npm run dev
-
-# Соберите production-версию
-npm run build
-
-# Проверьте production-сборку локально
-npm run preview
+npm run setup   # npm-зависимости, Python venv, Django, миграции, демо-заказы
+npm run dev     # Django :8000 + Vite :5173 одновременно
 ```
 
-## 📱 Тестирование на мобильном
+Откройте http://localhost:5173. С телефона в той же Wi-Fi сети: `http://<IP-компьютера>:5173`.
 
-1. **Chrome DevTools**: Откройте DevTools (F12) → Toggle Device Toolbar (Ctrl+Shift+M)
-2. **Реальное устройство**: 
-   - Запустите dev-сервер: `npm run dev` (он уже слушает все интерфейсы)
-   - Откройте на телефоне: `http://[ваш-IP]:3000`
+| Команда | Что делает |
+| --- | --- |
+| `npm run setup` | Первая установка |
+| `npm run setup:api` | Только Python-часть (venv, Django, миграции) |
+| `npm run dev` | Фронтенд + бэкенд |
+| `npm run dev:web` / `npm run dev:api` | По отдельности |
+| `npm run build` | Продакшен-сборка фронтенда в `frontend/dist` |
+| `npm run seed` | Пересоздать демо-заказы |
+| `npm run manage -- <cmd>` | Любая команда Django, например `npm run manage -- createsuperuser` |
 
-## 🧱 Технологии
+Админка Django: http://localhost:8000/admin (сначала `npm run manage -- createsuperuser`).
 
-- **React 19** — компонентный UI
-- **TypeScript** — строгая типизация домена и пропсов
-- **Vite** — dev-сервер и сборка
-- **LocalStorage** — слой данных для demo-режима (легко меняется на API)
-
-## 📁 Структура проекта
+## Структура
 
 ```
 mini-crm/
-├── index.html                 # Vite-точка входа (root + module script)
-├── vite.config.ts             # Конфигурация Vite
-├── tsconfig*.json             # Настройки TypeScript
-├── assets/
-│   └── sample-orders/         # Примеры фотографий заказов
-└── src/
-    ├── main.tsx               # Точка входа React, подключение стилей
-    ├── App.tsx                # Роутинг между списком и деталями, состояние фильтра
-    ├── types.ts               # Типы Order, OrderStatus, OrderFilter и др.
-    ├── styles/
-    │   ├── variables.css      # Дизайн-система (цвета, отступы, шрифты)
-    │   ├── reset.css          # CSS reset для кроссбраузерности
-    │   └── main.css           # Основные стили компонентов
-    ├── data/
-    │   ├── dataService.ts     # Слой данных (LocalStorage)
-    │   └── mockOrders.ts      # Mock-данные заказов
-    ├── hooks/
-    │   ├── useRoute.ts        # History-API роутер (?order=...)
-    │   └── useOrders.ts       # Загрузка списка и одного заказа
-    ├── context/
-    │   └── ToastProvider.tsx  # Тосты через React Context
-    ├── components/
-    │   ├── OrderList.tsx      # Экран списка + фильтры + пустое состояние
-    │   ├── OrderCard.tsx      # Карточка заказа
-    │   ├── OrderDetail.tsx    # Экран деталей заказа
-    │   ├── PhotoViewer.tsx    # Полноэкранный просмотр фото
-    │   ├── FilterChips.tsx    # Чипы фильтра по статусу
-    │   └── LazyImage.tsx      # Ленивая загрузка изображений
-    └── utils/
-        ├── format.ts          # Форматирование дат
-        ├── labels.ts          # Лейблы/классы статусов и приоритетов
-        └── icons.tsx          # SVG-иконки как React-компоненты
+├── package.json               # npm-скрипты верхнего уровня
+├── scripts/backend.mjs        # кроссплатформенный запуск Django (venv, migrate, runserver)
+├── backend/
+│   ├── config/                # settings, urls
+│   └── orders/
+│       ├── models.py          # Order, OrderPhoto, ChecklistItem, OrderEvent
+│       ├── views.py           # JSON API
+│       ├── serializers.py
+│       ├── admin.py
+│       └── management/commands/seed_demo.py
+└── frontend/
+    ├── components.json        # конфиг shadcn CLI
+    └── src/
+        ├── components/
+        │   ├── ui/            # компоненты shadcn — как после `npx shadcn add`
+        │   │   ├── avatar.tsx  badge.tsx  button.tsx  card.tsx  checkbox.tsx
+        │   │   ├── dialog.tsx  input.tsx  separator.tsx  sheet.tsx  skeleton.tsx
+        │   │   └── sonner.tsx  tabs.tsx  textarea.tsx
+        │   └── orders/        # компоненты приложения на базе ui/
+        │       ├── orders-screen.tsx        # экран списка
+        │       ├── order-search.tsx  order-filters.tsx  order-list.tsx  order-card.tsx
+        │       ├── order-detail-screen.tsx  # экран заказа (выезжает справа)
+        │       ├── order-detail.tsx         # содержимое карточки заказа
+        │       ├── photo-gallery.tsx        # галерея + просмотр на весь экран + загрузка
+        │       ├── order-status-sheet.tsx   # выбор статуса (bottom sheet)
+        │       ├── order-facts.tsx  order-client.tsx  order-checklist.tsx
+        │       ├── order-note.tsx  order-timeline.tsx  order-actions.tsx
+        │       └── order-status-badge.tsx  category-icon.tsx  detail-section.tsx
+        ├── hooks/             # use-orders, use-order, use-order-route, use-swipe-back
+        ├── lib/               # utils.ts (cn), api.ts, format.ts, order-status.ts
+        ├── types/order.ts
+        ├── App.tsx  main.tsx  index.css   # index.css — тема shadcn (CSS-переменные)
 ```
 
-## 🎨 Кастомизация
+Структура совпадает с проектом после `npx shadcn init`: алиасы `@/components`, `@/components/ui`,
+`@/lib/utils`, `@/hooks`. Новые компоненты добавляются обычной командой:
 
-### Изменение цветовой схемы
-
-Отредактируйте `src/styles/variables.css`:
-
-```css
-:root {
-  --color-primary: #2563eb;        /* Основной цвет */
-  --color-status-new: #3b82f6;     /* Цвет статуса "Новый" */
-  --color-status-in-progress: #f59e0b;  /* "В работе" */
-  --color-status-completed: #10b981;    /* "Завершён" */
-  /* ... и другие переменные */
-}
+```bash
+cd frontend && npx shadcn@latest add dropdown-menu
 ```
 
-### Добавление типов заказов
+Файлы в `components/ui/` не менялись, кроме `sonner.tsx`: в нём тема берётся из системы, а не из
+`next-themes`. Всё, что относится к приложению, лежит в `components/orders/`. Поэтому при
+переносе в другой shadcn-проект достаточно скопировать `orders/`, `hooks/`, `lib/` и `types/`.
 
-В `src/utils/icons.tsx` добавьте иконку в объект `ORDER_TYPE_ICONS`:
+## API
 
-```tsx
-const ORDER_TYPE_ICONS: Record<string, ReactElement> = {
-  confectionery: <svg>...</svg>,
-  auto: <svg>...</svg>,
-  'your-type': <svg>...</svg>, // Добавьте свой тип
-  default: <svg>...</svg>,
-};
+| Метод | URL | Описание |
+| --- | --- | --- |
+| GET | `/api/orders/?status=new,in_progress&q=торт` | Список |
+| POST | `/api/orders/` | Создать заказ (для внешних источников) |
+| GET | `/api/orders/<id>/` | Детали |
+| PATCH | `/api/orders/<id>/` | `status`, `note`, `title`, `price`… |
+| POST | `/api/orders/<id>/photos/` | Загрузка фото, multipart-поле `files` |
+| PATCH | `/api/checklist/<id>/` | `{"done": true}` |
+
+Статусы: `new`, `in_progress`, `done`, `cancelled`. Каждая смена статуса записывается в историю.
+
+### Как внешний источник присылает заказ
+
+```bash
+curl -X POST http://localhost:8000/api/orders/ \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $INCOMING_API_TOKEN" \
+  -d '{
+    "source": "telegram", "external_id": "msg-123",
+    "category": "Кондитер", "title": "Торт на юбилей",
+    "client_name": "Мария", "client_phone": "+7 900 000-00-00",
+    "address": "Самовывоз", "due_date": "2026-10-10", "due_time": "12:00",
+    "price": 6500, "prepayment": 2000,
+    "description": "Шоколадный, 2 кг",
+    "checklist": ["Согласовать начинку", "Получить предоплату"],
+    "photo_urls": ["https://example.com/ref.jpg"]
+  }'
 ```
 
-Не забудьте добавить `'your-type'` в union `OrderType` в `src/types.ts` (или оставьте как есть — тип допускает произвольные строки).
+Пара `source` + `external_id` уникальна, поэтому одна и та же заявка дважды не создастся.
+Если переменная `INCOMING_API_TOKEN` не задана, токен не проверяется (это удобно при разработке).
+Фронтенд обновляет список каждые 30 секунд и при возвращении во вкладку.
 
-### Добавление пользовательских полей
+## Перед продакшеном
 
-В `src/types.ts` расширьте интерфейс `Order`, а в `src/data/mockOrders.ts` — данные:
+- Задать `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=0`, `DJANGO_ALLOWED_HOSTS`, `INCOMING_API_TOKEN`.
+- Добавить вход исполнителя (сессии Django или токены) и вернуть CSRF-проверку: сейчас API
+  открыт, см. `api_view` в `orders/views.py`.
+- Перейти с SQLite на Postgres, раздавать `media/` через nginx или S3.
+- `frontend/dist` можно раздавать nginx-ом; для API на отдельном домене задать `VITE_API_URL`.
 
-```ts
-export interface Order {
-  id: string;
-  // ... стандартные поля
-  customFields?: {
-    weight: string;
-    flavor: string;
-    // Ваши поля
-  };
-}
-```
+## Windows: если `npm run setup` не создаёт backend/.venv
 
-## 🔌 Интеграция с API
+Обычно `python` в Windows — это заглушка Microsoft Store, а не настоящий Python.
+1. Установите Python 3.10+ с python.org и поставьте галочку «Add python.exe to PATH».
+2. Параметры → Приложения → Дополнительные параметры → Псевдонимы выполнения приложений → выключите `python.exe` и `python3.exe`.
+3. Перезапустите терминал, проверьте `py -3 --version`, затем выполните `npm run setup:api`.
 
-Все компоненты обращаются к данным только через `src/data/dataService.ts`, поэтому достаточно заменить реализацию его функций на `fetch`:
-
-```ts
-export async function getOrders(filters: OrderFilters = {}): Promise<Order[]> {
-  const query = filters.status && filters.status !== 'all' ? `?status=${filters.status}` : '';
-  const response = await fetch(`/api/orders${query}`);
-  return await response.json();
-}
-
-export async function getOrderById(id: string): Promise<Order | null> {
-  const response = await fetch(`/api/orders/${id}`);
-  return response.ok ? await response.json() : null;
-}
-
-export async function updateOrderStatus(
-  id: string,
-  newStatus: OrderStatus,
-): Promise<Order | null> {
-  const response = await fetch(`/api/orders/${id}/status`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: newStatus }),
-  });
-  return response.ok ? await response.json() : null;
-}
-```
-
-Хуки `useOrders` / `useOrder` уже асинхронные, менять их не нужно.
-
-### Примеры API endpoints
-
-```
-GET    /api/orders              # Получить список заказов
-GET    /api/orders/:id          # Получить заказ по ID
-PATCH  /api/orders/:id/status   # Обновить статус заказа
-POST   /api/orders              # Создать новый заказ
-```
-
-## 🌐 WebSocket для real-time обновлений
-
-Добавьте хук и подключите его в `src/App.tsx`:
-
-```tsx
-function useOrderUpdates(onUpdate: (order: Order) => void) {
-  useEffect(() => {
-    const ws = new WebSocket('wss://your-server.com/ws');
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'order_updated') onUpdate(data.order);
-    };
-    return () => ws.close();
-  }, [onUpdate]);
-}
-```
-
-Обновлённый заказ кладите в состояние — React сам перерисует список.
-
-## 📊 Метрики производительности
-
-Целевые показатели:
-- ⚡ **First Contentful Paint**: < 1s
-- 🎨 **Анимации**: 60fps
-- 📱 **Размер касаний**: ≥ 44pt
-- 💾 **Размер приложения**: < 100KB (без изображений)
-
-Проверка в Chrome DevTools:
-1. Lighthouse (Ctrl+Shift+P → "Lighthouse")
-2. Performance tab для проверки 60fps
-3. Network tab → Throttling для теста на медленной сети
-
-## 🎯 Поддерживаемые браузеры
-
-- ✅ Chrome/Edge 90+
-- ✅ Safari 14+
-- ✅ Firefox 88+
-- ✅ iOS Safari 14+
-- ✅ Chrome Android 90+
-
-## 💡 Советы по использованию
-
-### Для кондитеров
-- Добавьте фото референсов и готовых работ
-- Укажите вес изделий и ингредиенты
-- Отмечайте аллергены в особых указаниях
-
-### Для автомехаников
-- Прикрепляйте фото повреждений
-- Указывайте марку и модель автомобиля
-- Отмечайте пробег и номер
-
-### Для сантехников
-- Фото проблемы до начала работы
-- Адрес и особенности доступа
-- Необходимые материалы
-
-## 🔐 Безопасность
-
-- Все данные хранятся локально в браузере
-- Нет отправки данных на сервер (в режиме demo)
-- При интеграции с API используйте HTTPS
-- Добавьте JWT токены для аутентификации
-
-## 📝 Roadmap
-
-- [ ] Push-уведомления о новых заказах
-- [ ] Синхронизация между устройствами
-- [ ] Экспорт в PDF/Excel
-- [ ] Статистика и аналитика
-- [ ] Шаблоны заказов
-- [ ] Калькулятор стоимости
-
-## 🤝 Contributing
-
-Проект создан как шаблон. Адаптируйте под свои нужды!
-
-## 📄 Лицензия
-
-MIT License - используйте как хотите!
-
----
-
-**Создано с ❤️ для мастеров своего дела**
+Путь к Python можно указать явно: `$env:PYTHON="C:\Python313\python.exe"; npm run setup:api`.
