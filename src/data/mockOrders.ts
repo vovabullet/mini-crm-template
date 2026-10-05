@@ -1,0 +1,102 @@
+import type { Order } from '../types';
+
+const svg = (label: string, size: number) =>
+  `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"%3E%3Crect fill="%23f0f0f0" width="${size}" height="${size}"/%3E%3Ctext x="50%25" y="50%25" font-size="${Math.round(
+    size * 0.09,
+  )}" text-anchor="middle" dy=".3em" fill="%23999"%3E${encodeURIComponent(
+    label,
+  )}%3C/text%3E%3C/svg%3E`;
+
+const photo = (id: string, label: string, thumbLabel: string) => ({
+  id,
+  url: svg(label, 400),
+  thumbnail: svg(thumbLabel, 200),
+});
+
+export const MOCK_ORDERS: Order[] = [
+  {
+    id: 'ORD-001',
+    orderNumber: 'ORD-001',
+    customerName: 'Анна Петрова',
+    customerPhone: '+7 999 123 4567',
+    orderType: 'confectionery',
+    orderTypeLabel: 'Кондитерские изделия',
+    status: 'new',
+    priority: 'high',
+    createdAt: '2026-10-03T09:00:00Z',
+    dueDate: '2026-10-05T14:00:00Z',
+    description:
+      'Свадебный торт, 3 яруса, белый крем с розами. Вес примерно 5 кг.',
+    specialInstructions: 'Без орехов - аллергия у невесты',
+    photos: [photo('p1', 'Фото торта', 'Фото'), photo('p2', 'Референс', 'Референс')],
+    address: 'Москва, ул. Красная площадь, д. 1',
+  },
+  {
+    id: 'ORD-002',
+    orderNumber: 'ORD-002',
+    customerName: 'Иван Сидоров',
+    customerPhone: '+7 999 234 5678',
+    orderType: 'auto',
+    orderTypeLabel: 'Автомеханика',
+    status: 'in-progress',
+    priority: 'medium',
+    createdAt: '2026-10-02T14:30:00Z',
+    startedAt: '2026-10-03T10:00:00Z',
+    dueDate: '2026-10-04T18:00:00Z',
+    description: 'Замена передних тормозных колодок и дисков на BMW X5',
+    specialInstructions: 'Клиент попросил проверить уровень масла',
+    photos: [photo('p3', 'Старые колодки', 'Фото')],
+    address: 'Москва, Ленинский проспект, 45',
+  },
+  {
+    id: 'ORD-003',
+    orderNumber: 'ORD-003',
+    customerName: 'Мария Иванова',
+    customerPhone: '+7 999 345 6789',
+    orderType: 'plumbing',
+    orderTypeLabel: 'Сантехника',
+    status: 'completed',
+    priority: 'high',
+    createdAt: '2026-10-01T08:00:00Z',
+    startedAt: '2026-10-01T11:00:00Z',
+    completedAt: '2026-10-01T15:30:00Z',
+    dueDate: '2026-10-01T16:00:00Z',
+    description: 'Срочный ремонт протечки в ванной. Замена смесителя.',
+    specialInstructions: 'Ключи от квартиры у консьержа',
+    photos: [],
+    address: 'Москва, Тверская улица, 12, кв. 45',
+  },
+  {
+    id: 'ORD-004',
+    orderNumber: 'ORD-004',
+    customerName: 'Сергей Волков',
+    customerPhone: '+7 999 456 7890',
+    orderType: 'confectionery',
+    orderTypeLabel: 'Кондитерские изделия',
+    status: 'new',
+    priority: 'low',
+    createdAt: '2026-10-04T07:00:00Z',
+    dueDate: '2026-10-10T12:00:00Z',
+    description:
+      'Капкейки на день рождения, 24 штуки. Шоколадные с ванильным кремом.',
+    specialInstructions: 'Упаковать в коробку с лентой',
+    photos: [photo('p4', 'Пример капкейков', 'Пример')],
+    address: 'Москва, Арбат, 20',
+  },
+  {
+    id: 'ORD-005',
+    orderNumber: 'ORD-005',
+    customerName: 'Елена Смирнова',
+    customerPhone: '+7 999 567 8901',
+    orderType: 'auto',
+    orderTypeLabel: 'Автомеханика',
+    status: 'new',
+    priority: 'medium',
+    createdAt: '2026-10-04T11:00:00Z',
+    dueDate: '2026-10-06T17:00:00Z',
+    description: 'Диагностика двигателя Mercedes-Benz C-Class. Горит чек.',
+    specialInstructions: 'Машина не заводится, нужен эвакуатор',
+    photos: [photo('p5', 'Чек энджин', 'Чек'), photo('p6', 'Код ошибки', 'Код')],
+    address: 'Москва, Кутузовский проспект, 36',
+  },
+];
