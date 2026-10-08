@@ -1,24 +1,19 @@
 {
   "name": "mini-crm",
   "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "description": "Mini CRM - mobile-first order management app for service workers",
+  "version": "0.1.0",
+  "description": "Мини-CRM для исполнителей: React + shadcn/ui (frontend) и Django (backend)",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview",
-    "typecheck": "tsc -b"
-  },
-  "dependencies": {
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "setup": "npm install && npm --prefix frontend install && node scripts/backend.mjs setup",
+    "setup:api": "node scripts/backend.mjs setup",
+    "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "node scripts/backend.mjs run",
+    "dev:web": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "seed": "node scripts/backend.mjs manage seed_demo --reset",
+    "manage": "node scripts/backend.mjs manage"
   },
   "devDependencies": {
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@vitejs/plugin-react": "^6.1.2",
-    "typescript": "^7.0.2",
-    "vite": "^8.3.2"
+    "concurrently": "^9.1.0"
   }
 }
